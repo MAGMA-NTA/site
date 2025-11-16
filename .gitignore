@@ -94,3 +94,9 @@ build/
 # Misc
 *.log
 .DS_Store
+
+# Exported content and import scripts (local only, don't push to git)
+backend/exported-content/
+backend/fetch-content.js
+backend/import-content.js
+backend/import-to-local.js

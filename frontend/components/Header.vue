@@ -1,12 +1,10 @@
 <template>
     <header
-        :class="`${
-            isHome ? 'absolute' : 'absolute'
-        } top-0 left-0 w-full  flex justify-between items-center px-5 pt-3 text-white`"
+        :class="`absolute top-0 left-0 w-full flex justify-between items-center px-5 pt-3 text-white`"
     >
         <div
             v-if="isHome"
-            class="flex gap-2 text-nav-lg [&_a]:font-bold mix-blend-exclusion w-fit"
+            class="flex gap-2 text-nav-lg [&_a]:font-bold mix-blend-exclusion w-fit hidden md:block"
         >
             <span class="font-normal">Language</span>
             <ul>
@@ -166,7 +164,139 @@
             </a>
         </div>
 
-        <div v-if="!isHome" class="flex gap-4 header--buttons items-center">
+        <div class="block md:hidden">
+            <button
+                @click="toggleMenu"
+                class="focus:outline-none relative z-[60] p-2 mix-blend-difference"
+                :aria-expanded="isMenuOpen"
+                aria-label="Toggle menu"
+            >
+                <span class="sr-only">Toggle menu</span>
+                <svg
+                    width="40"
+                    height="40"
+                    fill="none"
+                    viewBox="0 0 32 32"
+                    style="overflow: visible; mix-blend-mode: difference"
+                >
+                    <line
+                        x1="4"
+                        y1="8"
+                        x2="28"
+                        y2="8"
+                        stroke="white"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        class="hamburger-line"
+                        :class="{ 'hamburger-line--top-open': isMenuOpen }"
+                    />
+                    <line
+                        x1="4"
+                        y1="16"
+                        x2="28"
+                        y2="16"
+                        stroke="white"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        class="hamburger-line hamburger-line--middle"
+                        :class="{ 'hamburger-line--middle-open': isMenuOpen }"
+                    />
+                    <line
+                        x1="4"
+                        y1="24"
+                        x2="28"
+                        y2="24"
+                        stroke="white"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        class="hamburger-line"
+                        :class="{ 'hamburger-line--bottom-open': isMenuOpen }"
+                    />
+                </svg>
+            </button>
+            <transition name="menu">
+                <div
+                    v-if="isMenuOpen"
+                    class="mobile-menu fixed inset-0 z-50 bg-black flex flex-col items-center justify-center text-center"
+                    @click.self="closeMenu"
+                >
+                    <nav class="flex flex-col gap-6 text-2xl font-bold">
+                        <transition-group
+                            name="menu-item"
+                            tag="div"
+                            class="flex flex-col gap-6"
+                        >
+                            <nuxt-link
+                                key="exhibitions"
+                                class="button button--green bg-white"
+                                :class="{ active: isExhibitionsRoute }"
+                                :to="localePath('/exhibitions')"
+                                @click="closeMenu"
+                            >
+                                <span v-if="i18n.locale.value === 'en'">
+                                    Gallery
+                                </span>
+                                <span v-else> Galeria </span>
+                            </nuxt-link>
+                            <nuxt-link
+                                key="events"
+                                class="button button--red bg-white"
+                                :class="{ active: isEventsRoute }"
+                                :to="localePath('/events')"
+                                @click="closeMenu"
+                            >
+                                <span v-if="i18n.locale.value === 'en'">
+                                    Events
+                                </span>
+                                <span v-else> Eventos </span>
+                            </nuxt-link>
+                            <nuxt-link
+                                key="tattoos"
+                                class="button button--blue bg-white"
+                                :class="{ active: isTattoosRoute }"
+                                :to="localePath('/tattoos')"
+                                @click="closeMenu"
+                            >
+                                <span v-if="i18n.locale.value === 'en'">
+                                    Tattoos
+                                </span>
+                                <span v-else> Tatuagens </span>
+                            </nuxt-link>
+                        </transition-group>
+                        <div
+                            class="flex gap-2 text-nav-lg [&_a]:font-bold mix-blend-exclusion w-fit md:hidden"
+                        >
+                            <span class="font-normal">Language</span>
+                            <ul>
+                                <li
+                                    v-for="locale in availableLocales"
+                                    :key="locale"
+                                >
+                                    <NuxtLink :to="switchLocalePath(locale)">
+                                        {{ locale }}
+                                    </NuxtLink>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                    <div class="mt-8 text-white text-base menu-contact">
+                        <p>
+                            +351 296 000 000 <br />
+                            info@magma.wtf
+                        </p>
+                        <p class="mt-2">
+                            Rua Carvalho Araújo 47 <br />
+                            9500-040, Ponta Delgada
+                        </p>
+                    </div>
+                </div>
+            </transition>
+        </div>
+
+        <div
+            v-if="!isHome"
+            class="gap-4 header--buttons items-center hidden md:flex"
+            >`
             <nuxt-link
                 class="button button--green"
                 :class="{ active: isExhibitionsRoute }"
@@ -202,7 +332,9 @@
             </div>
         </div>
 
-        <div class="text-sm [&_p]:mb-2 text-right mix-blend-exclusion">
+        <div
+            class="text-sm [&_p]:mb-2 text-right mix-blend-exclusion hidden md:block"
+        >
             <p>
                 +351 296 000 000 <br />
                 info@magma.wtf
@@ -220,6 +352,8 @@ const i18n = useI18n()
 const switchLocalePath = useSwitchLocalePath()
 const localePath = useLocalePath()
 const route = useRoute()
+
+const isMenuOpen = ref(false)
 
 const isHome = computed(() => {
     return route.path === '/' || route.path === `/${i18n.locale.value}`
@@ -242,4 +376,122 @@ const availableLocales = computed(() => {
         (locale) => locale !== i18n.locale.value
     )
 })
+
+const toggleMenu = () => {
+    isMenuOpen.value = !isMenuOpen.value
+    if (isMenuOpen.value) {
+        document.body.style.overflow = 'hidden'
+    } else {
+        document.body.style.overflow = ''
+    }
+}
+
+const closeMenu = () => {
+    isMenuOpen.value = false
+    document.body.style.overflow = ''
+}
+
+// Keyboard support
+const handleKeydown = (e: KeyboardEvent) => {
+    if (e.key === 'Escape' && isMenuOpen.value) {
+        closeMenu()
+    }
+}
+
+onMounted(() => {
+    window.addEventListener('keydown', handleKeydown)
+})
+
+onUnmounted(() => {
+    window.removeEventListener('keydown', handleKeydown)
+    document.body.style.overflow = ''
+})
+
+// Close menu on route change
+watch(
+    () => route.path,
+    () => {
+        if (isMenuOpen.value) {
+            closeMenu()
+        }
+    }
+)
 </script>
+
+<style scoped>
+/* Hamburger menu button - prevent clipping */
+.block.md\\:hidden button {
+    overflow: visible !important;
+}
+
+.block.md\\:hidden svg {
+    overflow: visible !important;
+}
+
+/* Hamburger menu transformation */
+.hamburger-line {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: 16px 16px;
+}
+
+.hamburger-line--top-open {
+    transform: translateY(4px) rotate(45deg);
+}
+
+.hamburger-line--middle {
+    transition: opacity 0.2s ease;
+}
+
+.hamburger-line--middle-open {
+    opacity: 0;
+}
+
+.hamburger-line--bottom-open {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+/* Menu backdrop transition - removed for instant display */
+.menu-enter-active,
+.menu-leave-active {
+    transition: none;
+}
+
+.menu-enter-from,
+.menu-leave-to {
+    opacity: 1;
+}
+
+.menu-enter-active .mobile-menu,
+.menu-leave-active .mobile-menu {
+    animation: none;
+}
+
+/* Menu items - animations removed for instant display */
+.menu-item-enter-active,
+.menu-item-leave-active {
+    transition: none;
+}
+
+.menu-item-enter-from,
+.menu-item-enter-to,
+.menu-item-leave-from,
+.menu-item-leave-to {
+    opacity: 1;
+    transform: none;
+}
+
+/* Menu link hover effects - animations removed */
+.menu-link {
+    transition: none;
+}
+
+.menu-link:hover {
+    transform: none;
+}
+
+.menu-link:active {
+    transform: none;
+}
+
+/* Contact info animation removed for instant display */
+</style>

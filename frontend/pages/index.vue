@@ -1,15 +1,15 @@
 <template>
     <Head :seo="home?.data?.seo" />
     <Header />
-    <div id="page-wrap" class="home">
+    <div id="page-wrap" class="home overflow-x-hidden">
         <section
             id="intro"
             class="w-full min-h-screen container flex flex-col items-center justify-center pb-20"
         >
             <div
-                class="relative flex flex-col min-[1112px]:flex-row xl:flex-col mt-20 min-[1112px]:mt-0 lg:mt-[7rem] xl:mt-20 md:ml-10 xl:ml-[10.995vw]"
+                class="relative flex flex-col min-[1112px]:flex-row xl:flex-col mt-40 mx-40 md:px-0 min-[1112px]:mt-0 lg:mt-[7rem] xl:mt-20 md:ml-10 xl:ml-[10.995vw]"
             >
-                <h1 v-if="home?.data?.BigTitle" class="title-xl md:w-4/12">
+                <h1 v-if="home?.data?.BigTitle" class="title-xl md:w-8/12">
                     {{ home?.data?.BigTitle }}
                 </h1>
                 <div

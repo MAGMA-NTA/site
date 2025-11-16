@@ -32,7 +32,14 @@
 
                     <div class="text-detail text-center md:text-right">
                         <div class="font-bold">
-                            {{ exhibition.artists?.[0]?.Name }}
+                            {{
+                                exhibition.artists &&
+                                exhibition.artists.length > 1
+                                    ? locale === 'en'
+                                        ? 'Collective exhibition'
+                                        : 'Exposição coletiva'
+                                    : exhibition.artists?.[0]?.Name
+                            }}
                         </div>
                         <div class="tracking-[0.1em]">
                             <Dates

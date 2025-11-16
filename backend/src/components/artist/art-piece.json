@@ -37,6 +37,19 @@
     },
     "Medium": {
       "type": "string"
+    },
+    "Detail": {
+      "displayName": "Piece details",
+      "type": "component",
+      "repeatable": true,
+      "component": "artist.piece-details"
+    },
+    "Available": {
+      "type": "boolean"
+    },
+    "HideFromWebsite": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

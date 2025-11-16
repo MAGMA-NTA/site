@@ -8,9 +8,12 @@ export interface ArtistArtPiece extends Schema.Component {
     icon: 'brush';
   };
   attributes: {
+    Available: Attribute.Boolean;
     Depth: Attribute.String;
     Description: Attribute.Text;
+    Detail: Attribute.Component<'artist.piece-details', true>;
     Height: Attribute.String;
+    HideFromWebsite: Attribute.Boolean & Attribute.DefaultTo<false>;
     Image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     Medium: Attribute.String;
     Title: Attribute.String;
@@ -34,6 +37,21 @@ export interface ArtistFlashTattoos extends Schema.Component {
     >;
     Image: Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     Price: Attribute.String;
+  };
+}
+
+export interface ArtistPieceDetails extends Schema.Component {
+  collectionName: 'components_artist_piece_details';
+  info: {
+    description: '';
+    displayName: 'Piece details';
+    icon: 'bulletList';
+  };
+  attributes: {
+    Select: Attribute.Enumeration<
+      ['Title', 'Author', 'Dimensions', 'Technique', 'Year']
+    >;
+    Value: Attribute.String;
   };
 }
 
@@ -148,6 +166,7 @@ declare module '@strapi/types' {
     export interface Components {
       'artist.art-piece': ArtistArtPiece;
       'artist.flash-tattoos': ArtistFlashTattoos;
+      'artist.piece-details': ArtistPieceDetails;
       'global.fa-qs': GlobalFaQs;
       'global.meta-social': GlobalMetaSocial;
       'global.seo': GlobalSeo;

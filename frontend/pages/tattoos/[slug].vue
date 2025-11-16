@@ -14,12 +14,18 @@
             >
                 Página do artista
             </div>
-            <div class="flex gap-10 items-center overflow-hidden leading-none">
+            <div class="overflow-hidden leading-none">
                 <div
-                    v-for="i in 5"
-                    class="text-[7.313rem] uppercase tracking-[0.15em] text-nowrap"
+                    class="loop flex gap-10 items-center w-fit"
+                    data-speed="slow"
                 >
-                    {{ artist?.Name }}
+                    <div
+                        data-name="rotating-text"
+                        v-for="i in 5"
+                        class="text-[7.313rem] uppercase tracking-[0.15em] text-nowrap"
+                    >
+                        {{ artist?.Name }}
+                    </div>
                 </div>
             </div>
             <div
@@ -225,6 +231,7 @@
 import type { Artist } from '~/types/strapi'
 import type { Exhibition } from '~/types/strapi'
 import { useExhibitions } from '~/composables/exhibitions'
+import { loop } from '~/composables/loop'
 
 const config = useRuntimeConfig()
 const route = useRoute()
@@ -297,6 +304,7 @@ const loadMore = () => {
 onMounted(() => {
     nextTick(() => {
         initExhibitions()
+        loop('.loop')
     })
 })
 </script>

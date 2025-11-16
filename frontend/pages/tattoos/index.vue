@@ -73,7 +73,9 @@
     </section>
 
     <section class="bg-black py-5 pb-10 text-white">
-        <h2 class="title-full">{{ tattoo?.ExhibitionTattoosTitle }}</h2>
+        <h2 class="title-full text-center">{{
+            tattoo?.ExhibitionTattoosTitle
+        }}</h2>
         <div
             class="flex flex-col md:flex-row gap-20 container-xl items-center mt-20"
         >
@@ -101,42 +103,77 @@
                     </NuxtLink>
                 </div>
                 <div class="">
-                    <div class="relative aspect-[97/48] h-full">
+                    <div
+                        ref="sliderContainer"
+                        class="relative aspect-[97/48] h-full cursor-grab active:cursor-grabbing select-none"
+                        @mousedown="startDrag"
+                        @touchstart="startDrag"
+                    >
                         <span
                             v-if="locale === 'en'"
-                            class="absolute bottom-0 left-0 -rotate-90 -translate-x-[100%] text-teaser"
+                            class="absolute bottom-0 left-0 -rotate-90 -translate-x-[100%] text-teaser z-10"
                             >Before</span
                         >
                         <span
                             v-else
-                            class="absolute bottom-0 left-0 -rotate-90 -translate-x-[100%] text-teaser"
+                            class="absolute bottom-0 left-0 -rotate-90 -translate-x-[100%] text-teaser z-10"
                             >Antes</span
                         >
+                        <!-- Before Image (background) -->
                         <NuxtImg
                             v-if="tattoo?.BeforeImage?.url"
-                            class="w-full h-full object-cover absolute"
+                            class="w-full h-full object-cover absolute top-0 left-0"
                             provider="strapi"
                             format="webp"
                             :src="tattoo?.BeforeImage?.url"
                             :alt="tattoo?.BeforeImage?.alternativeText"
                         />
 
-                        <NuxtImg
-                            v-if="tattoo?.AfterImage?.url"
-                            class="w-full h-full object-cover absolute"
-                            provider="strapi"
-                            format="webp"
-                            :src="tattoo?.AfterImage?.url"
-                            :alt="tattoo?.AfterImage?.alternativeText"
-                        />
+                        <!-- After Image (revealed by slider) -->
+                        <div
+                            class="absolute top-0 left-0 w-full h-full overflow-hidden"
+                            :style="{
+                                clipPath: `inset(0 ${
+                                    100 - sliderPosition
+                                }% 0 0)`,
+                            }"
+                        >
+                            <NuxtImg
+                                v-if="tattoo?.AfterImage?.url"
+                                class="w-full h-full object-cover absolute top-0 left-0"
+                                provider="strapi"
+                                format="webp"
+                                :src="tattoo?.AfterImage?.url"
+                                :alt="tattoo?.AfterImage?.alternativeText"
+                            />
+                        </div>
+
+                        <!-- Slider Handle -->
+                        <div
+                            class="absolute top-0 bottom-0 w-1 bg-white z-20 cursor-grab active:cursor-grabbing"
+                            :style="{
+                                left: `${sliderPosition}%`,
+                                transform: 'translateX(-50%)',
+                            }"
+                        >
+                            <div
+                                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg"
+                            >
+                                <div class="flex gap-1">
+                                    <div class="w-0.5 h-3 bg-gray-800"></div>
+                                    <div class="w-0.5 h-3 bg-gray-800"></div>
+                                </div>
+                            </div>
+                        </div>
+
                         <span
                             v-if="locale === 'en'"
-                            class="absolute bottom-0 right-0 rotate-90 translate-x-[100%] text-teaser"
+                            class="absolute bottom-0 right-0 rotate-90 translate-x-[100%] text-teaser z-10"
                             >After</span
                         >
                         <span
                             v-else
-                            class="absolute bottom-0 right-0 rotate-90 translate-x-[100%] text-teaser"
+                            class="absolute bottom-0 right-0 rotate-90 translate-x-[100%] text-teaser z-10"
                             >Depois</span
                         >
                     </div>
@@ -178,18 +215,18 @@
         <h3 class="title-full">{{ tattoo?.ADNSubtitle }}</h3>
 
         <div
-            class="flex flex-col md:flex-row gap-10 container-xl mt-20 justify-center items-center"
+            class="flex flex-col md:flex-row gap-10 container-xl mt-20 justify-center"
         >
             <div
                 v-for="member in tattoo?.Team || []"
-                class="first:bg-yellow last:bg-green last:text-white p-3"
+                class="first:bg-yellow last:bg-green last:text-white p-3 w-full lg:w-1/2"
             >
-                <div class="w-full aspect-[624/417]">
+                <div class="w-full aspect-[210/297]">
                     <NuxtImg
                         v-if="member.Photo?.url"
                         provider="strapi"
                         format="webp"
-                        class="w-full aspect-[210/297] object-cover"
+                        class="w-full object-cover h-full"
                         :src="member.Photo.url"
                     />
                 </div>
@@ -255,17 +292,60 @@ const artistsLoaded = computed(() => {
     return artists.data.slice(0, length.value)
 })
 
+// Before/After slider functionality
+const sliderContainer = ref<HTMLElement | null>(null)
+const sliderPosition = ref(50) // Start at 50% (middle)
+const isDragging = ref(false)
+
+const startDrag = (e: MouseEvent | TouchEvent) => {
+    isDragging.value = true
+    e.preventDefault()
+
+    const updatePosition = (clientX: number) => {
+        if (!sliderContainer.value) return
+
+        const rect = sliderContainer.value.getBoundingClientRect()
+        const x = clientX - rect.left
+        const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100))
+        sliderPosition.value = percentage
+    }
+
+    const handleMove = (e: MouseEvent | TouchEvent) => {
+        if (!isDragging.value) return
+        const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX
+        updatePosition(clientX)
+    }
+
+    const handleEnd = () => {
+        isDragging.value = false
+        document.removeEventListener('mousemove', handleMove)
+        document.removeEventListener('mouseup', handleEnd)
+        document.removeEventListener('touchmove', handleMove)
+        document.removeEventListener('touchend', handleEnd)
+    }
+
+    const initialX = 'touches' in e ? e.touches[0].clientX : e.clientX
+    updatePosition(initialX)
+
+    document.addEventListener('mousemove', handleMove)
+    document.addEventListener('mouseup', handleEnd)
+    document.addEventListener('touchmove', handleMove, { passive: false })
+    document.addEventListener('touchend', handleEnd)
+}
+
 onMounted(() => {
     const requestTattooButton = document.querySelector(
         '[data-name="request-tattoo"]'
-    )
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > window.innerHeight) {
-            requestTattooButton.style.display = 'block'
-        } else {
-            requestTattooButton.style.display = 'none'
-        }
-    })
+    ) as HTMLElement | null
+    if (requestTattooButton) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > window.innerHeight) {
+                requestTattooButton.style.display = 'block'
+            } else {
+                requestTattooButton.style.display = 'none'
+            }
+        })
+    }
 })
 </script>
 
