@@ -1,0 +1,108 @@
+/* TITLES */
+@layer base {
+    @font-face {
+        font-family: 'Satoshi';
+        src: url('../fonts/Satoshi-Light.woff2') format('woff2'),
+            url('../fonts/Satoshi-Light.woff') format('woff'),
+            url('../fonts/Satoshi-Light.ttf') format('truetype');
+        font-weight: 300;
+        font-display: swap;
+        font-style: normal;
+    }
+
+    @font-face {
+        font-family: 'Satoshi';
+        src: url('../fonts/Satoshi-Regular.woff2') format('woff2'),
+            url('../fonts/Satoshi-Regular.woff') format('woff'),
+            url('../fonts/Satoshi-Regular.ttf') format('truetype');
+        font-weight: 400;
+        font-display: swap;
+        font-style: normal;
+    }
+
+    @font-face {
+        font-family: 'Satoshi';
+        src: url('../fonts/Satoshi-Bold.woff2') format('woff2'),
+            url('../fonts/Satoshi-Bold.woff') format('woff'),
+            url('../fonts/Satoshi-Bold.ttf') format('truetype');
+        font-weight: 700;
+        font-display: swap;
+        font-style: normal;
+    }
+
+    body {
+        font-family: 'Satoshi';
+    }
+
+    .title-full {
+        @apply tracking-[0.3em] leading-[100%] uppercase;
+
+        font-weight: 400;
+        font-size: min(calc(130vw / var(--char-count) * 0.9), 30vw);
+        width: 100vw;
+        white-space: nowrap;
+        text-align: center;
+    }
+
+    .title-xl {
+        @apply text-2xl lg:text-3xl min-[1112px]:text-2xl xl:text-3xl tracking-[0.3em] leading-[130%] uppercase;
+    }
+
+    .title-lg {
+        @apply text-lg md:text-2xl tracking-[0.3em] leading-[200%] uppercase;
+    }
+
+    .title-md {
+        @apply text-base md:text-xl tracking-[0.1em] leading-[130%] md:leading-[200%] uppercase;
+    }
+
+    /* TEXT & NAV */
+
+    .text-body {
+        @apply text-base leading-[130%] tracking-[-0.02em];
+    }
+
+    .text-body p {
+        @apply mb-6;
+    }
+
+    .text-date {
+        @apply text-xs leading-[130%] tracking-[0.3em] uppercase;
+    }
+
+    .text-teaser {
+        @apply text-sm leading-[130%] tracking-[0.3em] uppercase;
+    }
+
+    .text-teaser-lg {
+        @apply text-lg leading-[130%] tracking-[0.3em] uppercase;
+    }
+
+    .text-detail {
+        @apply text-xs leading-[130%] tracking-[0.3em] uppercase;
+    }
+
+    .text-nav-lg {
+        @apply text-sm font-bold leading-[130%] tracking-[0.4em] uppercase;
+    }
+
+    .text-nav-sm {
+        @apply text-xs font-bold leading-[130%] tracking-[0.4em] uppercase;
+    }
+
+    .text-rotating-xs {
+        @apply text-xs font-bold leading-[130%] tracking-[0.4em] uppercase;
+    }
+
+    .text-rotating-lg {
+        @apply text-base md:text-xl font-light leading-[130%] tracking-[0.4em] uppercase;
+    }
+
+    .prose p {
+        @apply my-5 text-sm md:text-base leading-[130%] tracking-[-0.02em];
+    }
+
+    .faq p {
+        @apply my-5 text-sm md:text-base leading-[130%] tracking-[-0.02em];
+    }
+}

@@ -1,0 +1,57 @@
+@import './typography.css';
+@import './buttons.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+    @apply text-base bg-white;
+}
+
+.container {
+    @apply md:max-w-[95vw] mx-auto;
+}
+
+.container-xl {
+    @apply md:max-w-[85vw] mx-auto;
+}
+
+.pagination {
+    @apply !text-center !flex !justify-center mt-5;
+}
+
+.swiper-pagination-bullet {
+    @apply !w-4 !h-4 !border-2 !border-black !bg-white !relative !p-1;
+}
+
+.swiper-pagination-bullet-active {
+    @apply after:!bg-black after:!w-[80%] after:!h-[80%] after:!absolute after:top-1/2 after:left-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:rounded-full;
+}
+
+[data-speed='slow'] {
+    --loop-duration: 60s;
+}
+
+[data-speed='medium'] {
+    --loop-duration: 45s;
+}
+
+[data-speed='fast'] {
+    --loop-duration: 20s;
+}
+
+[data-speed='fastest'] {
+    --loop-duration: 2s;
+}
+
+.loop {
+    animation: loop var(--loop-duration, 20s) linear infinite;
+}
+
+@keyframes loop {
+    to {
+        transform: translateX(calc(-50% - 2.5vw));
+    }
+}
